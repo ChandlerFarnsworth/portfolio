@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chandler Farnsworth — Digital Design & Development</title>
+  <meta name="description" content="Designer, developer, and BI analyst. Portfolio of web, brand, data, and media work." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       TOKENS
+    ============================================================ */
+    :root {
+      --bg:              #ffffff;
+      --surface:         #f5f8fc;
+      --surface-raised:  #eaf1f8;
+      --border:          #b3cde0;
+      --border-subtle:   #daeaf4;
+      --text-1:          #011f4b;
+      --text-2:          #03396c;
+      --text-3:          #6497b1;
+      --accent:          #005b96;
+      --accent-light:    #6497b1;
+      --accent-lightest: #b3cde0;
+      --cw-card:         #011f4b;
+      --cw-gold:         #C9A06E;
+      --gutter:          clamp(1.25rem, 5vw, 4.5rem);
+      --radius-card:     12px;
+      --ease:            0.22s ease;
+    }
+
+    /* ============================================================
+       RESET
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    /* ============================================================
+       NAV
+    ============================================================ */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.375rem var(--gutter);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.4s, border-color 0.4s;
+    }
+    #nav.scrolled {
+      background: rgba(255,255,255,0.96);
+      border-color: var(--border);
+    }
+
+    .nav-logo {
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--text-1);
+      transition: opacity var(--ease);
+    }
+    .nav-logo:hover { opacity: 0.6; }
+    .nav-logo span { font-weight: 400; color: var(--text-3); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      transition: color var(--ease);
+    }
+    .nav-links a:hover { color: var(--text-1); }
+
+    .nav-pill {
+      color: #fff !important;
+      background: var(--text-1);
+      padding: 0.5rem 1.25rem !important;
+      border-radius: 100px;
+      transition: opacity var(--ease) !important;
+    }
+    .nav-pill:hover { opacity: 0.75 !important; }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #home {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    /*
+      HERO BACKGROUND
+      ─────────────────────────────────────────────────────────────
+      By default this is a blue gradient. To use your own image:
+        1. Place your image in the same folder as this file
+        2. Change the background-image line below to:
+           background-image: url('your-photo.jpg');
+        3. Remove or adjust the default gradient background
+      ─────────────────────────────────────────────────────────────
+    */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+
+      background-image: url('hero.jpg');
+      background-size: cover;
+      /* background-size: cover; */
+      /* background-position: center top; */
+    }
+
+    /* Overlay so text stays readable over any image or gradient */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        100deg,
+        rgba(255,255,255,0.97) 0%,
+        rgba(255,255,255,0.82) 42%,
+        rgba(255,255,255,0.25) 70%,
+        rgba(255,255,255,0.08) 100%
+      );
+    }
+
+    /* Hero layout — text left, signing card right */
+    .hero-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: clamp(2rem, 4vw, 5rem);
+      align-items: flex-end;
+      padding: 0 var(--gutter);
+      padding-bottom: clamp(3rem, 7vh, 5.5rem);
+    }
+
+    .hero-body { max-width: 620px; }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .hero-label::before {
+      content: '';
+      width: 1.75rem; height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-h1 {
+      font-size: clamp(2.25rem, 6vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      color: var(--text-1);
+    }
+    .hero-h1 em {
+      font-style: normal;
+      color: var(--text-3);
+      font-weight: 300;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.875rem, 1.3vw, 1rem);
+      color: var(--text-2);
+      font-weight: 400;
+      line-height: 1.7;
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.75rem;
+    }
+
+    .btn-solid {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--text-1);
+      color: #fff;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.8125rem 1.75rem;
+      border-radius: 100px;
+      border: none;
+      transition: opacity var(--ease);
+    }
+    .btn-solid:hover { opacity: 0.75; }
+    .btn-solid.blue { background: var(--accent); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      border: 1.5px solid var(--border);
+      border-radius: 100px;
+      padding: 0.8125rem 1.75rem;
+      background: none;
+      transition: border-color var(--ease), color var(--ease);
+    }
+    .btn-ghost:hover { border-color: var(--text-1); color: var(--text-1); }
+
+    /* Stats */
+    .hero-stats {
+      display: flex;
+      gap: 2.25rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid rgba(1,31,75,0.1);
+      flex-wrap: wrap;
+    }
+    .stat-n {
+      font-size: 1.625rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-1);
+      line-height: 1;
+    }
+    .stat-l {
+      font-size: 0.5rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-top: 0.25rem;
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem; right: var(--gutter);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-3);
+      font-size: 0.4375rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
+    .scroll-hint-line {
+      width: 1px; height: 2.25rem;
+      background: linear-gradient(to bottom, var(--border), transparent);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+    /* ============================================================
+       SIGNING CARD
+    ============================================================ */
+    .signing-card-wrap {
+      align-self: center;
+      flex-shrink: 0;
+    }
+
+    .signing-card {
+      background: var(--cw-card);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      width: clamp(200px, 18vw, 248px);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 28px 72px rgba(1,31,75,0.3), 0 4px 18px rgba(1,31,75,0.18);
+    }
+
+    /* Subtle cross-hatch texture */
+    .signing-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(-45deg,
+        rgba(255,255,255,0.018) 0, rgba(255,255,255,0.018) 1px,
+        transparent 1px, transparent 11px
+      );
+      pointer-events: none;
+    }
+
+    /* ── Logo placeholder ── */
+    .cw-logo-area {
+      margin-bottom: 1rem;
+    }
+
+    .cw-logo-placeholder {
+      /* optional container styles */
+    }
+
+    .cw-logo-img {
+      width: 75%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ── Card gold rule ── */
+    .sc-rule {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--cw-gold), transparent);
+      opacity: 0.5;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Field rows ── */
+    .sc-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+      margin-bottom: 1.375rem;
+    }
+
+    .sc-field {}
+
+    .sc-field-label {
+      font-size: 0.4375rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(179,205,224,0.45);
+      margin-bottom: 0.175rem;
+    }
+
+    .sc-field-value {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+    }
+
+    /* ── Committed badge ── */
+    .sc-committed {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: rgba(179,205,224,0.1);
+      border: 1px solid rgba(179,205,224,0.2);
+      border-radius: 100px;
+      padding: 0.35rem 0.8rem;
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-lightest);
+    }
+
+    .sc-check {
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: rgba(179,205,224,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       MARQUEE
+    ============================================================ */
+    .marquee-wrap {
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.8rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+      background: var(--surface);
+    }
+    .marquee-track {
+      display: inline-flex;
+      animation: scrollX 30s linear infinite;
+    }
+    .marquee-track span {
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      padding: 0 2.25rem;
+    }
+    .marquee-track span.dot { color: var(--accent); padding: 0; }
+    @keyframes scrollX { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* ============================================================
+       SECTIONS
+    ============================================================ */
+    section { padding: clamp(4rem, 9vh, 7rem) var(--gutter); }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 0.875rem;
+    }
+    .section-label::before {
+      content: '';
+      width: 1.125rem; height: 1px;
+      background: var(--text-3);
+    }
+
+    .section-heading {
+      font-size: clamp(1.875rem, 4.5vw, 3.75rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--text-1);
+    }
+    .section-heading em {
+      font-style: normal;
+      font-weight: 300;
+      color: var(--text-3);
+    }
+
+    /* ============================================================
+       WORK
+    ============================================================ */
+    #work { border-top: 1px solid var(--border-subtle); }
+
+    .work-top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-row { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+
+    .ftab {
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 100px;
+      padding: 0.4375rem 0.9375rem;
+      transition: all var(--ease);
+    }
+    .ftab:hover { color: var(--text-2); border-color: var(--border); }
+    .ftab.active { color: var(--text-1); border-color: var(--border); background: var(--surface); }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1rem;
+    }
+
+    /* Card */
+    .card {
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.32s ease, border-color 0.32s ease, box-shadow 0.32s ease;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border);
+      box-shadow: 0 16px 48px rgba(1,31,75,0.1), 0 3px 12px rgba(1,31,75,0.06);
+    }
+
+    .card-img {
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .card-img svg {
+      display: block; width: 100%;
+      transition: transform 0.5s ease;
+    }
+    .card:hover .card-img svg { transform: scale(1.035); }
+
+    .card-badge {
+      position: absolute;
+      top: 0.875rem; left: 0.875rem;
+      font-size: 0.4375rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.25rem 0.6rem;
+      border-radius: 100px;
+    }
+
+    .card-arrow {
+      position: absolute;
+      bottom: 0.875rem; right: 0.875rem;
+      width: 1.875rem; height: 1.875rem;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.28);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.6);
+      opacity: 0;
+      transform: translateY(5px) scale(0.88);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+    .card:hover .card-arrow { opacity: 1; transform: none; }
+
+    .card-body {
+      padding: 1.375rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--text-1);
+      margin-bottom: 0.375rem;
+    }
+
+    .card-desc {
+      font-size: 0.8125rem;
+      color: var(--text-2);
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 0.3rem;
+      margin-top: auto;
+      padding-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 0.4375rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.5rem;
+      border-radius: 100px;
+    }
+
+    .card.hidden { display: none; }
+
+    /* Compact card variant (Highlander Pen, AGO) */
+    .card.compact .card-body { padding: 1.125rem; }
+    .card.compact .card-title { font-size: 0.9375rem; }
+    .card.compact .card-desc { font-size: 0.75rem; }
+    .card.compact .card-tags { padding-top: 0.75rem; }
+
+    /* ============================================================
+       CAPABILITIES
+    ============================================================ */
+    .caps-section {
+      margin-top: 4.5rem;
+      padding-top: 4rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .caps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2.25rem;
+    }
+    .cap {
+      padding: 1.625rem;
+      background: var(--bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-card);
+      transition: border-color var(--ease), transform var(--ease), box-shadow var(--ease);
+    }
+    .cap:hover {
+      border-color: var(--border);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(1,31,75,0.06);
+    }
+    .cap-icon {
+      width: 1.875rem; height: 1.875rem;
+      color: var(--accent);
+      opacity: 0.7;
+      margin-bottom: 1.125rem;
+    }
+    .cap-name {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.4rem;
+      color: var(--text-1);
+    }
+    .cap-desc {
+      font-size: 0.8125rem;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       ABOUT
+    ============================================================ */
+    #about {
+      border-top: 1px solid var(--border-subtle);
+      position: relative;
+    }
+    #about::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('about.png');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #about > * { position: relative; z-index: 1; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 7vw, 6rem);
+      margin-top: 3rem;
+      align-items: start;
+    }
+
+    .about-bio {
+      font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
+      font-weight: 400;
+      line-height: 1.75;
+      color: var(--text-2);
+    }
+    .about-bio strong { font-weight: 700; color: var(--text-1); }
+
+    /* C&W chapter block */
+    .chapter-block {
+      background: var(--cw-card);
+      border-radius: 10px;
+      padding: 1.25rem 1.375rem;
+      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .chapter-logo {
+      font-size: 1.375rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+    .chapter-rule {
+      width: 1px; height: 1.875rem;
+      background: rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+    .chapter-role {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+    }
+    .chapter-loc {
+      font-size: 0.5625rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(179,205,224,0.55);
+      margin-top: 0.175rem;
+    }
+
+    .about-actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .about-detail-col { display: flex; flex-direction: column; gap: 2.25rem; }
+
+    .detail-group h4 {
+      font-size: 0.4375rem;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 0.875rem;
+    }
+    .detail-group ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .detail-group li {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+    .detail-group li::before {
+      content: '';
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       CONTACT
+    ============================================================ */
+    #contact { border-top: 1px solid var(--border-subtle); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 7vw, 6rem);
+      align-items: start;
+    }
+
+    .contact-heading {
+      font-size: clamp(1.875rem, 4vw, 3.375rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-top: 1.125rem;
+      margin-bottom: 1.75rem;
+      color: var(--text-1);
+    }
+    .contact-heading em { font-style: normal; font-weight: 300; color: var(--text-3); }
+
+    .contact-sub {
+      font-size: 0.9375rem;
+      color: var(--text-2);
+      line-height: 1.7;
+      margin-bottom: 1.875rem;
+    }
+
+    .contact-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text-2);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: color var(--ease), border-color var(--ease);
+    }
+    .contact-email:hover { color: var(--text-1); border-color: var(--text-1); }
+
+    .form { display: flex; flex-direction: column; gap: 1.125rem; }
+
+    .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .form-field label {
+      font-size: 0.4375rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .form-field input,
+    .form-field textarea {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.8125rem 0.9375rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: var(--text-1);
+      outline: none;
+      transition: border-color var(--ease);
+      width: 100%;
+    }
+    .form-field input::placeholder,
+    .form-field textarea::placeholder { color: var(--text-3); }
+    .form-field input:focus,
+    .form-field textarea:focus { border-color: var(--accent); }
+    .form-field textarea { min-height: 120px; resize: vertical; }
+
+    .form-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--text-1);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.8125rem 1.875rem;
+      border-radius: 100px;
+      border: none;
+      transition: opacity var(--ease), background var(--ease);
+      width: fit-content;
+      cursor: pointer;
+    }
+    .form-submit:hover { opacity: 0.75; }
+    .form-submit.sent { background: var(--accent); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      padding: 1.875rem var(--gutter);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .footer-logo {
+      font-size: 0.875rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--text-3);
+    }
+    .footer-copy { font-size: 0.5625rem; color: var(--text-3); letter-spacing: 0.06em; }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a {
+      font-size: 0.5625rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      transition: color var(--ease);
+    }
+    .footer-links a:hover { color: var(--text-1); }
+
+    /* ============================================================
+       SCROLL REVEAL
+    ============================================================ */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    .reveal.d1 { transition-delay: 0.1s; }
+    .reveal.d2 { transition-delay: 0.2s; }
+    .reveal.d3 { transition-delay: 0.3s; }
+    .reveal.d4 { transition-delay: 0.4s; }
+
+    /* ============================================================
+       MOBILE
+    ============================================================ */
+    @media (max-width: 980px) {
+      .hero-layout { grid-template-columns: 1fr; }
+      .signing-card-wrap { display: flex; justify-content: flex-start; }
+      .signing-card { width: 100%; max-width: 320px; }
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .card[data-span] { grid-column: span 1 !important; }
+      .about-grid, .contact-grid { grid-template-columns: 1fr; }
+      .work-top { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 600px) {
+      .nav-hide { display: none; }
+      .footer-links { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       NAV
+  ============================================================ -->
+  <nav id="nav">
+    <a href="#home" class="nav-logo">Chandler <span>Farnsworth</span></a>
+    <ul class="nav-links">
+      <li class="nav-hide"><a href="#work">Work</a></li>
+      <li class="nav-hide"><a href="#about">About</a></li>
+      <!-- Resume link — replace resume.pdf with your actual filename when you upload it -->
+      <li><a href="resume.pdf" target="_blank" rel="noopener">Resume ↗</a></li>
+      <li><a href="#contact" class="nav-pill">Connect</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="home">
+
+    <!--
+      HERO BACKGROUND IMAGE
+      ─────────────────────────────────────────────────────────────
+      To use your own photo or gradient:
+        1. Upload your image to the same folder
+        2. In the CSS above, find ".hero-bg" and update background-image
+           to: url('your-filename.jpg')
+      ─────────────────────────────────────────────────────────────
+    -->
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-layout">
+
+      <!-- Left: Text -->
+      <div class="hero-body">
+        <h1 class="hero-h1" id="hl-h1">
+          Digital work<br/><em>built to move.</em>
+        </h1>
+
+        <p class="hero-sub" id="hl-sub">
+          A portfolio of web development, brand identity, data visualization, and creative media — built across six years.
+        </p>
+
+        <div class="hero-ctas" id="hl-ctas">
+          <a href="#work" class="btn-solid">
+            View Work
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5h8M5.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <!-- Replace resume.pdf with your filename when uploaded -->
+          <a href="resume.pdf" target="_blank" rel="noopener" class="btn-ghost">
+            View Resume ↗
+          </a>
+        </div>
+
+        <div class="hero-stats" id="hl-stats">
+          <div><div class="stat-n">6+</div><div class="stat-l">Years</div></div>
+          <div><div class="stat-n">30+</div><div class="stat-l">Projects</div></div>
+          <div><div class="stat-n">4</div><div class="stat-l">Disciplines</div></div>
+          <div><div class="stat-n">STL</div><div class="stat-l">Next Stop</div></div>
+        </div>
+      </div>
+
+      <!-- Right: Signing Card -->
+      <div class="signing-card-wrap" id="hl-card">
+        <div class="signing-card">
+
+          <!--
+            C&W LOGO
+            ───────────────────────────────────────────────────────
+            Replace the placeholder div below with your logo image:
+              <img src="cw-logo.png" alt="Cushman & Wakefield" style="width:100%;height:auto;" />
+            ───────────────────────────────────────────────────────
+          -->
+          <div class="cw-logo-area">
+            <div class="cw-logo-placeholder">
+              <img src="cw-logo.png" alt="Cushman & Wakefield" class="cw-logo-img" />
+            </div>
+          </div>
+
+          <div class="sc-rule"></div>
+
+          <div class="sc-fields">
+            <div class="sc-field">
+              <div class="sc-field-label">Position</div>
+              <div class="sc-field-value">Business Intelligence Analyst</div>
+            </div>
+            <div class="sc-field">
+              <div class="sc-field-label">Organization</div>
+              <div class="sc-field-value">Cushman &amp; Wakefield</div>
+            </div>
+            <div class="sc-field">
+              <div class="sc-field-label">Start Date</div>
+              <div class="sc-field-value">Summer 2026</div>
+            </div>
+            <div class="sc-field">
+              <div class="sc-field-label">Location</div>
+              <div class="sc-field-value">St. Louis, Missouri</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /hero-layout -->
+
+    <div class="scroll-hint" aria-hidden="true">
+      <div class="scroll-hint-line"></div>
+      Scroll
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MARQUEE
+  ============================================================ -->
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Web Development</span><span class="dot">·</span>
+      <span>Brand Identity</span><span class="dot">·</span>
+      <span>Power BI</span><span class="dot">·</span>
+      <span>Creative Media</span><span class="dot">·</span>
+      <span>CU Boulder '26</span><span class="dot">·</span>
+      <span>Cushman &amp; Wakefield</span><span class="dot">·</span>
+      <span>St. Louis MO</span><span class="dot">·</span>
+      <span>Data Visualization</span><span class="dot">·</span>
+      <span>UX Strategy</span><span class="dot">·</span>
+      <span>Web Development</span><span class="dot">·</span>
+      <span>Brand Identity</span><span class="dot">·</span>
+      <span>Power BI</span><span class="dot">·</span>
+      <span>Creative Media</span><span class="dot">·</span>
+      <span>CU Boulder '26</span><span class="dot">·</span>
+      <span>Cushman &amp; Wakefield</span><span class="dot">·</span>
+      <span>St. Louis MO</span><span class="dot">·</span>
+      <span>Data Visualization</span><span class="dot">·</span>
+      <span>UX Strategy</span><span class="dot">·</span>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       WORK
+  ============================================================ -->
+  <section id="work">
+    <div class="work-top">
+      <div class="reveal">
+        <div class="section-label">Selected Work</div>
+        <h2 class="section-heading">The work <em>speaks.</em></h2>
+      </div>
+      <div class="filter-row reveal d2">
+        <button class="ftab active" data-filter="all">All</button>
+        <button class="ftab" data-filter="web">Web</button>
+        <button class="ftab" data-filter="brand">Brand</button>
+        <button class="ftab" data-filter="data">Data</button>
+        <button class="ftab" data-filter="media">Media</button>
+      </div>
+    </div>
+
+    <div class="grid" id="projects-grid">
+
+      <!-- ── Boulder Marketing ── span 7 -->
+      <div class="card reveal" data-category="web brand" data-span="7">
+        <div class="card-img">
+          <svg viewBox="0 0 560 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="560" height="280" fill="#daeaf4"/>
+            <line x1="0" y1="70" x2="560" y2="70" stroke="#b3cde0" stroke-width="0.6" opacity="0.7"/>
+            <line x1="0" y1="140" x2="560" y2="140" stroke="#1A2E45" stroke-width="0.6" opacity="0.5"/>
+            <line x1="0" y1="210" x2="560" y2="210" stroke="#1A2E45" stroke-width="0.6" opacity="0.5"/>
+            <line x1="112" y1="0" x2="112" y2="280" stroke="#1A2E45" stroke-width="0.6" opacity="0.4"/>
+            <line x1="224" y1="0" x2="224" y2="280" stroke="#b3cde0" stroke-width="0.6" opacity="0.5"/>
+            <line x1="336" y1="0" x2="336" y2="280" stroke="#b3cde0" stroke-width="0.6" opacity="0.5"/>
+            <line x1="448" y1="0" x2="448" y2="280" stroke="#b3cde0" stroke-width="0.6" opacity="0.5"/>
+            <rect x="80" y="35" width="400" height="210" rx="8" fill="#f0f7fc" stroke="#b3cde0" stroke-width="1"/>
+            <rect x="80" y="35" width="400" height="26" rx="8" fill="#daeaf4"/>
+            <circle cx="98" cy="48" r="4" fill="#6497b1" opacity="0.5"/>
+            <circle cx="113" cy="48" r="4" fill="#6497b1" opacity="0.5"/>
+            <circle cx="128" cy="48" r="4" fill="#6497b1" opacity="0.5"/>
+            <rect x="150" y="41" width="240" height="13" rx="6" fill="#b3cde0" opacity="0.5"/>
+            <rect x="108" y="78" width="344" height="34" rx="4" fill="#daeaf4" opacity="0.8"/>
+            <rect x="108" y="124" width="220" height="9" rx="4" fill="#b3cde0" opacity="0.6"/>
+            <rect x="108" y="140" width="280" height="9" rx="4" fill="#b3cde0" opacity="0.4"/>
+            <rect x="108" y="156" width="180" height="9" rx="4" fill="#b3cde0" opacity="0.4"/>
+            <rect x="108" y="182" width="98" height="48" rx="5" fill="#daeaf4" stroke="#b3cde0" stroke-width="0.7"/>
+            <rect x="216" y="182" width="98" height="48" rx="5" fill="#daeaf4" stroke="#b3cde0" stroke-width="0.7"/>
+            <rect x="324" y="182" width="118" height="48" rx="5" fill="#daeaf4" stroke="#b3cde0" stroke-width="0.7"/>
+            <circle cx="476" cy="96" r="40" fill="none" stroke="#6497b1" stroke-width="0.8" opacity="0.4"/>
+            <circle cx="476" cy="96" r="26" fill="#b3cde0" opacity="0.3"/>
+          </svg>
+          <span class="card-badge">Web + Brand</span>
+          <div class="card-arrow">
+            <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Boulder Marketing</h3>
+          <p class="card-desc">Full-scope brand identity and digital presence for a Boulder-based marketing agency. Strategy, design system, and custom web build.</p>
+          <div class="card-tags">
+            <span class="tag">Brand Identity</span>
+            <span class="tag">Web Dev</span>
+            <span class="tag">Strategy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── BBIG Designs ── span 5 -->
+      <div class="card reveal d1" data-category="brand web" data-span="5">
+        <div class="card-img">
+          <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="260" fill="#eaf3f9"/>
+            <circle cx="200" cy="124" r="96" fill="none" stroke="#6497b1" stroke-width="0.8" opacity="0.4"/>
+            <circle cx="200" cy="124" r="72" fill="none" stroke="#6497b1" stroke-width="0.8" opacity="0.35"/>
+            <circle cx="200" cy="124" r="50" fill="none" stroke="#005b96" stroke-width="0.8" opacity="0.35"/>
+            <circle cx="200" cy="124" r="26" fill="#b3cde0" opacity="0.5"/>
+            <line x1="104" y1="124" x2="296" y2="124" stroke="#6497b1" stroke-width="0.5" opacity="0.4"/>
+            <line x1="200" y1="28" x2="200" y2="220" stroke="#6497b1" stroke-width="0.5" opacity="0.4"/>
+            <line x1="132" y1="56" x2="268" y2="192" stroke="#6497b1" stroke-width="0.4" opacity="0.25"/>
+            <line x1="268" y1="56" x2="132" y2="192" stroke="#6497b1" stroke-width="0.4" opacity="0.25"/>
+            <text x="200" y="130" text-anchor="middle" fill="#03396c" font-size="17" font-family="Georgia,serif" font-weight="700" letter-spacing="4" opacity="0.6">BBIG</text>
+            <g opacity="0.35">
+              <line x1="40" y1="40" x2="58" y2="40" stroke="#6497b1" stroke-width="0.8"/>
+              <line x1="40" y1="40" x2="40" y2="58" stroke="#6497b1" stroke-width="0.8"/>
+              <line x1="360" y1="40" x2="342" y2="40" stroke="#6497b1" stroke-width="0.8"/>
+              <line x1="360" y1="40" x2="360" y2="58" stroke="#6497b1" stroke-width="0.8"/>
+              <line x1="40" y1="212" x2="58" y2="212" stroke="#6497b1" stroke-width="0.8"/>
+              <line x1="40" y1="212" x2="40" y2="194" stroke="#6497b1" stroke-width="0.8"/>
+              <line x1="360" y1="212" x2="342" y2="212" stroke="#6497b1" stroke-width="0.8"/>
+              <line x1="360" y1="212" x2="360" y2="194" stroke="#6497b1" stroke-width="0.8"/>
+            </g>
+          </svg>
+          <span class="card-badge">Brand + Design</span>
+          <div class="card-arrow">
+            <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">BBIG Designs</h3>
+          <p class="card-desc">Visual identity system and brand architecture — wordmark, color, type, and guidelines for a growing creative firm.</p>
+          <div class="card-tags">
+            <span class="tag">Identity</span>
+            <span class="tag">Typography</span>
+            <span class="tag">Guidelines</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Putt Doctor ── span 6 -->
+      <div class="card reveal" data-category="web brand" data-span="6">
+        <div class="card-img">
+          <svg viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="480" height="220" fill="#eef6f0"/>
+            <ellipse cx="240" cy="168" rx="160" ry="26" fill="none" stroke="#7ab89a" stroke-width="0.8" opacity="0.5"/>
+            <ellipse cx="240" cy="168" rx="110" ry="16" fill="none" stroke="#7ab89a" stroke-width="0.6" opacity="0.4"/>
+            <ellipse cx="240" cy="168" rx="64" ry="9" fill="#c2e0ce" opacity="0.5"/>
+            <line x1="240" y1="64" x2="240" y2="158" stroke="#4a9a6a" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+            <path d="M 240 64 L 280 78 L 240 92 Z" fill="#7ab89a" opacity="0.5"/>
+            <circle cx="240" cy="165" r="9" fill="#c2e0ce" stroke="#7ab89a" stroke-width="0.8" opacity="0.7"/>
+            <line x1="164" y1="104" x2="231" y2="158" stroke="#7ab89a" stroke-width="1.5" stroke-linecap="round" opacity="0.45"/>
+            <rect x="159" y="101" width="13" height="5" rx="2" fill="#7ab89a" opacity="0.4"/>
+            <circle cx="240" cy="124" r="56" fill="none" stroke="#a8d4bc" stroke-width="28" opacity="0.18"/>
+          </svg>
+          <span class="card-badge">Web + Brand</span>
+          <div class="card-arrow">
+            <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Putt Doctor</h3>
+          <p class="card-desc">Complete brand identity and web experience for an indoor putting destination. From naming to launch-ready digital presence.</p>
+          <div class="card-tags">
+            <span class="tag">Branding</span>
+            <span class="tag">Web</span>
+            <span class="tag">UX</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Highlander Pen ── span 3 (compact) -->
+      <div class="card compact reveal d1" data-category="brand" data-span="3">
+        <div class="card-img">
+          <svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="240" height="180" fill="#f5f0eb"/>
+            <rect x="108" y="18" width="24" height="120" rx="6" fill="none" stroke="#c4956a" stroke-width="0.8" opacity="0.5"/>
+            <rect x="112" y="22" width="16" height="112" rx="4" fill="#e8d8c8" opacity="0.8"/>
+            <rect x="128" y="26" width="5" height="62" rx="2" fill="#c4956a" opacity="0.35"/>
+            <path d="M 113 138 L 120 160 L 127 138 Z" fill="#c4956a" opacity="0.5"/>
+            <line x1="120" y1="148" x2="120" y2="158" stroke="#c4956a" stroke-width="0.8" opacity="0.4"/>
+            <rect x="108" y="68" width="24" height="4" rx="2" fill="#c4956a" opacity="0.3"/>
+            <ellipse cx="120" cy="90" rx="44" ry="72" fill="none" stroke="#d4b090" stroke-width="20" opacity="0.1"/>
+          </svg>
+          <span class="card-badge">Brand</span>
+          <div class="card-arrow">
+            <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Highlander Pen</h3>
+          <p class="card-desc">Product branding and packaging design for a premium pen brand.</p>
+          <div class="card-tags">
+            <span class="tag">Product Brand</span>
+            <span class="tag">Packaging</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── AGO Boulder ── span 3 (compact) -->
+      <div class="card compact reveal d2" data-category="media" data-span="3">
+        <div class="card-img">
+          <svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="240" height="180" fill="#f2eee8"/>
+            <rect x="22" y="22" width="196" height="124" rx="5" fill="none" stroke="#c4a882" stroke-width="0.8" opacity="0.5"/>
+            <rect x="26" y="30" width="7" height="8" rx="2" fill="#c4a882" opacity="0.4"/>
+            <rect x="26" y="46" width="7" height="8" rx="2" fill="#c4a882" opacity="0.4"/>
+            <rect x="26" y="62" width="7" height="8" rx="2" fill="#c4a882" opacity="0.4"/>
+            <rect x="207" y="30" width="7" height="8" rx="2" fill="#c4a882" opacity="0.4"/>
+            <rect x="207" y="46" width="7" height="8" rx="2" fill="#c4a882" opacity="0.4"/>
+            <rect x="38" y="34" width="164" height="100" rx="3" fill="#e0d4c0" opacity="0.6"/>
+            <circle cx="120" cy="84" r="22" fill="none" stroke="#a88c60" stroke-width="1" opacity="0.5"/>
+            <polygon points="112,74 112,94 132,84" fill="#a88c60" opacity="0.45"/>
+            <rect x="38" y="34" width="164" height="16" fill="#d0c0a8" opacity="0.5"/>
+            <rect x="38" y="118" width="164" height="16" fill="#d0c0a8" opacity="0.5"/>
+            <rect x="38" y="142" width="164" height="3" rx="1.5" fill="#c4a882" opacity="0.35"/>
+            <rect x="38" y="142" width="65" height="3" rx="1.5" fill="#a88c60" opacity="0.45"/>
+          </svg>
+          <span class="card-badge">Media</span>
+          <div class="card-arrow">
+            <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">AGO Boulder</h3>
+          <p class="card-desc">Video production and creative direction for Boulder's premier event venue.</p>
+          <div class="card-tags">
+            <span class="tag">Video</span>
+            <span class="tag">Direction</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Power BI ── span 12 -->
+      <div class="card reveal" data-category="data" data-span="12">
+        <div class="card-img">
+          <svg viewBox="0 0 1000 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <rect width="1000" height="190" fill="#eaf3f9"/>
+            <line x1="0" y1="48" x2="1000" y2="48" stroke="#b3cde0" stroke-width="0.5" opacity="0.5"/>
+            <line x1="0" y1="96" x2="1000" y2="96" stroke="#b3cde0" stroke-width="0.5" opacity="0.5"/>
+            <line x1="0" y1="144" x2="1000" y2="144" stroke="#b3cde0" stroke-width="0.5" opacity="0.5"/>
+            <rect x="28" y="18" width="192" height="154" rx="8" fill="#f5f9fd" stroke="#b3cde0" stroke-width="0.8"/>
+            <rect x="42" y="32" width="74" height="52" rx="5" fill="#daeaf4" opacity="0.9"/>
+            <rect x="126" y="32" width="74" height="52" rx="5" fill="#daeaf4" opacity="0.9"/>
+            <rect x="42" y="96" width="158" height="64" rx="5" fill="#e8f2f9" opacity="0.8"/>
+            <polyline points="48,148 62,138 76,144 90,130 104,136 118,122 132,128 146,116 160,122 174,108 188,114" fill="none" stroke="#005b96" stroke-width="1.5" opacity="0.6"/>
+            <rect x="238" y="18" width="266" height="154" rx="8" fill="#f5f9fd" stroke="#b3cde0" stroke-width="0.8"/>
+            <rect x="256" y="112" width="22" height="50" rx="3" fill="#b3cde0" opacity="0.7"/>
+            <rect x="288" y="94" width="22" height="68" rx="3" fill="#6497b1" opacity="0.5"/>
+            <rect x="320" y="78" width="22" height="84" rx="3" fill="#005b96" opacity="0.45"/>
+            <rect x="352" y="104" width="22" height="58" rx="3" fill="#6497b1" opacity="0.5"/>
+            <rect x="384" y="62" width="22" height="100" rx="3" fill="#005b96" opacity="0.5"/>
+            <rect x="416" y="46" width="22" height="116" rx="3" fill="#03396c" opacity="0.45"/>
+            <rect x="448" y="90" width="22" height="72" rx="3" fill="#6497b1" opacity="0.5"/>
+            <line x1="250" y1="162" x2="478" y2="162" stroke="#b3cde0" stroke-width="0.7" opacity="0.6"/>
+            <rect x="525" y="18" width="188" height="154" rx="8" fill="#f5f9fd" stroke="#b3cde0" stroke-width="0.8"/>
+            <circle cx="619" cy="104" r="46" fill="none" stroke="#daeaf4" stroke-width="27"/>
+            <circle cx="619" cy="104" r="46" fill="none" stroke="#005b96" stroke-width="27" stroke-dasharray="172 117" stroke-dashoffset="30" opacity="0.5"/>
+            <circle cx="619" cy="104" r="46" fill="none" stroke="#6497b1" stroke-width="27" stroke-dasharray="76 213" stroke-dashoffset="-142" opacity="0.5"/>
+            <circle cx="619" cy="104" r="46" fill="none" stroke="#b3cde0" stroke-width="27" stroke-dasharray="40 249" stroke-dashoffset="-218" opacity="0.6"/>
+            <circle cx="619" cy="104" r="26" fill="#f5f9fd"/>
+            <rect x="731" y="18" width="234" height="154" rx="8" fill="#f5f9fd" stroke="#b3cde0" stroke-width="0.8"/>
+            <polyline points="748,142 772,122 796,130 820,103 844,116 868,86 892,98 916,70 940,80 958,64" fill="none" stroke="#005b96" stroke-width="2" opacity="0.65"/>
+            <polygon points="748,152 748,142 772,122 796,130 820,103 844,116 868,86 892,98 916,70 958,64 958,162 748,162" fill="#b3cde0" opacity="0.18"/>
+            <line x1="748" y1="58" x2="748" y2="162" stroke="#b3cde0" stroke-width="0.7" opacity="0.5"/>
+            <line x1="748" y1="162" x2="962" y2="162" stroke="#b3cde0" stroke-width="0.7" opacity="0.5"/>
+          </svg>
+          <span class="card-badge">Data + BI</span>
+          <div class="card-arrow">
+            <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Power BI Dashboards & Reporting</h3>
+          <p class="card-desc">Executive-level reporting infrastructure with automated data pipelines, interactive dashboards, and cross-functional analytics. Includes work built during the Cushman & Wakefield internship.</p>
+          <div class="card-tags">
+            <span class="tag">Power BI</span>
+            <span class="tag">Data Viz</span>
+            <span class="tag">SQL</span>
+            <span class="tag">Automation</span>
+            <span class="tag">Analytics</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /grid -->
+
+    <!-- Capabilities -->
+    <div class="caps-section">
+      <div class="section-label reveal">What I Do</div>
+      <h2 class="section-heading reveal d1">Work across<br/><em>disciplines.</em></h2>
+      <div class="caps-grid">
+        <div class="cap reveal d1">
+          <div class="cap-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="18" x2="12" y2="21"/></svg>
+          </div>
+          <div class="cap-name">Web Development</div>
+          <p class="cap-desc">Custom sites and web apps built for performance and built to convert.</p>
+        </div>
+        <div class="cap reveal d2">
+          <div class="cap-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="cap-name">Brand & Identity</div>
+          <p class="cap-desc">Visual identity systems and guidelines that scale with your brand.</p>
+        </div>
+        <div class="cap reveal d3">
+          <div class="cap-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <div class="cap-name">Data & BI</div>
+          <p class="cap-desc">Power BI dashboards and data pipelines that turn numbers into decisions.</p>
+        </div>
+        <div class="cap reveal d4">
+          <div class="cap-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          </div>
+          <div class="cap-name">Creative Media</div>
+          <p class="cap-desc">Video production and creative direction for brands with something to say.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ABOUT
+  ============================================================ -->
+  <section id="about">
+    <div class="section-label reveal">About</div>
+    <h2 class="section-heading reveal d1">The person<br/><em>behind the work.</em></h2>
+
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="about-bio">
+          From <strong>Boulder, Colorado</strong> — where the mountains have a way of putting things in perspective — I built a practice that spans design, development, data, and media.
+          <br/><br/>
+          I started in brand and marketing, developed fluency in web development, and built a parallel track in data visualization through internships at Cushman &amp; Wakefield and Carson Wealth.
+          <br/><br/>
+          Graduating from CU Boulder in <strong>Computer Science with a minor in Data Science</strong>, I'm heading to St. Louis as a full-time BI Analyst at C&amp;W — and leaving behind a portfolio that covers a lot of creative ground.
+        </div>
+
+        <div class="chapter-block">
+          <div class="chapter-logo">C&amp;W</div>
+          <div class="chapter-rule"></div>
+          <div>
+            <div class="chapter-role">Business Intelligence Analyst</div>
+            <div class="chapter-loc">Cushman &amp; Wakefield · St. Louis, MO · 2026</div>
+          </div>
+        </div>
+
+        <div class="about-actions">
+          <!-- Replace resume.pdf with your actual filename when uploaded -->
+          <a href="resume.pdf" target="_blank" rel="noopener" class="btn-solid">
+            View Resume ↗
+          </a>
+        </div>
+      </div>
+
+      <div class="about-detail-col reveal d2">
+        <div class="detail-group">
+          <h4>Core Disciplines</h4>
+          <ul>
+            <li>Brand Strategy &amp; Identity Design</li>
+            <li>Web Design &amp; Front-End Development</li>
+            <li>Power BI / Data Visualization</li>
+            <li>Creative Direction &amp; Video</li>
+            <li>Marketing &amp; Digital Strategy</li>
+          </ul>
+        </div>
+        <div class="detail-group">
+          <h4>Tools &amp; Technologies</h4>
+          <ul>
+            <li>Figma, Adobe Creative Suite</li>
+            <li>HTML, CSS, JavaScript, React</li>
+            <li>Power BI, SQL, Power Query</li>
+            <li>Webflow, WordPress</li>
+            <li>Premiere Pro, After Effects</li>
+          </ul>
+        </div>
+        <div class="detail-group">
+          <h4>Education</h4>
+          <ul>
+            <li>University of Colorado Boulder</li>
+            <li>B.A. Computer Science · Spring 2026</li>
+            <li>Minor in Data Science</li>
+          </ul>
+        </div>
+        <div class="detail-group">
+          <h4>Location</h4>
+          <ul>
+            <li>Currently: Boulder, Colorado</li>
+            <li>Next Chapter: St. Louis, Missouri</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONTACT
+  ============================================================ -->
+  <section id="contact">
+    <div class="contact-grid">
+      <div class="reveal">
+        <div class="section-label">Say Hello</div>
+        <h2 class="contact-heading">
+          Let's stay<br/><em>connected.</em>
+        </h2>
+        <p class="contact-sub">
+          Not currently taking on freelance work — but always happy to connect, talk shop, or grab a virtual coffee. Drop a note.
+        </p>
+        <a href="mailto:chan.farnsworth@gmail.com" class="contact-email">
+          chan.farnsworth@gmail.com
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 9.5L9.5 1.5M9.5 1.5H3.5M9.5 1.5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <form class="form reveal d2" id="contact-form" novalidate>
+        <div class="form-field">
+          <label for="cf-name">Name</label>
+          <input type="text" id="cf-name" name="name" placeholder="Your name" autocomplete="name" required />
+        </div>
+        <div class="form-field">
+          <label for="cf-email">Email</label>
+          <input type="email" id="cf-email" name="email" placeholder="your@email.com" autocomplete="email" required />
+        </div>
+        <div class="form-field">
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" name="message" placeholder="What's on your mind?" required></textarea>
+        </div>
+        <button type="submit" class="form-submit" id="form-btn">
+          Send Message
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5h8M5.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <div class="footer-logo">CF</div>
+    <p class="footer-copy">© 2026 Chandler Farnsworth · Boulder → St. Louis</p>
+    <ul class="footer-links">
+      <li><a href="mailto:chan.farnsworth@gmail.com">Email</a></li>
+      <li><a href="https://linkedin.com/in/chandlerfarnsworth" target="_blank" rel="noopener">LinkedIn</a></li>
+      <!-- Replace resume.pdf with your actual filename -->
+      <li><a href="resume.pdf" target="_blank" rel="noopener">Resume</a></li>
+    </ul>
+  </footer>
+
+  <!-- ============================================================
+       JS
+  ============================================================ -->
+  <script>
+    'use strict';
+
+    /* Nav scroll */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50), { passive: true });
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+
+    /* Smooth scroll */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (!t) return;
+        e.preventDefault();
+        t.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    /* Scroll reveal */
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+    }, { threshold: 0.08, rootMargin: '0px 0px -28px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    /* Hero entrance */
+    [['hl-label',0.08],['hl-h1',0.22],['hl-sub',0.38],['hl-ctas',0.52],['hl-stats',0.65],['hl-card',0.38]].forEach(([id, d]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.cssText = `opacity:0;transform:translateY(16px);transition:opacity 0.85s ease ${d}s,transform 0.85s ease ${d}s`;
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.opacity='1'; el.style.transform='none'; }));
+    });
+
+    /* Project filter */
+    const cards = Array.from(document.querySelectorAll('#projects-grid .card'));
+    const ftabs = document.querySelectorAll('.ftab');
+
+    function layout(vis) {
+      vis.forEach(c => c.style.gridColumn='');
+      if (window.innerWidth <= 900) return;
+      const n = vis.length;
+      if (n===6){ vis[0].style.gridColumn='span 7'; vis[1].style.gridColumn='span 5'; vis[2].style.gridColumn='span 6'; vis[3].style.gridColumn='span 3'; vis[4].style.gridColumn='span 3'; vis[5].style.gridColumn='span 12'; }
+      else if (n===5){ vis[0].style.gridColumn='span 7'; vis[1].style.gridColumn='span 5'; vis[2].style.gridColumn='span 4'; vis[3].style.gridColumn='span 4'; vis[4].style.gridColumn='span 4'; }
+      else if (n===4){ vis[0].style.gridColumn='span 7'; vis[1].style.gridColumn='span 5'; vis[2].style.gridColumn='span 6'; vis[3].style.gridColumn='span 6'; }
+      else if (n===3){ vis[0].style.gridColumn='span 5'; vis[1].style.gridColumn='span 4'; vis[2].style.gridColumn='span 3'; }
+      else if (n===2){ vis[0].style.gridColumn='span 7'; vis[1].style.gridColumn='span 5'; }
+      else if (n===1){ vis[0].style.gridColumn='span 12'; }
+    }
+
+    ftabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        ftabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const f = tab.dataset.filter;
+        cards.forEach(c => c.classList.toggle('hidden', f!=='all' && !c.dataset.category.split(' ').includes(f)));
+        layout(cards.filter(c => !c.classList.contains('hidden')));
+      });
+    });
+    layout(cards);
+    window.addEventListener('resize', () => layout(cards.filter(c => !c.classList.contains('hidden'))));
+
+    /* Contact form */
+    const form = document.getElementById('contact-form');
+    const btn  = document.getElementById('form-btn');
+    const btnHTML = btn ? btn.innerHTML : '';
+
+    form && form.addEventListener('submit', e => {
+      e.preventDefault();
+      btn.innerHTML = 'Message Sent ✓';
+      btn.classList.add('sent');
+      btn.disabled = true;
+      setTimeout(() => { form.reset(); btn.innerHTML = btnHTML; btn.classList.remove('sent'); btn.disabled = false; }, 3500);
+    });
+  </script>
+</body>
+</html>
